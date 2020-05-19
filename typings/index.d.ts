@@ -96,6 +96,8 @@ declare module 'discord.js' {
     private _immediates: Set<NodeJS.Immediate>;
     private readonly api: object;
     private rest: object;
+    private decrementMaxListeners(): void;
+    private incrementMaxListeners(): void;
 
     public options: ClientOptions;
     public clearInterval(interval: NodeJS.Timer): void;
@@ -555,7 +557,7 @@ declare module 'discord.js' {
     public httpStatus: number;
   }
 
-  export class DMChannel extends TextBasedChannel(Channel) {
+  export class DMChannel extends TextBasedChannel(Channel, ['bulkDelete']) {
     constructor(client: Client, data?: object);
     public messages: MessageManager;
     public recipient: User;
@@ -588,6 +590,8 @@ declare module 'discord.js' {
     public afkChannelID: Snowflake | null;
     public afkTimeout: number;
     public applicationID: Snowflake | null;
+    public approximateMemberCount?: number;
+    public approximatePresenceCount?: number;
     public available: boolean;
     public banner: string | null;
     public channels: GuildChannelManager;
@@ -1473,10 +1477,10 @@ declare module 'discord.js' {
     public discriminator: string;
     public readonly defaultAvatarURL: string;
     public readonly dmChannel: DMChannel;
-    public flags: Readonly<UserFlags>;
+    public flags?: Readonly<UserFlags>;
     public id: Snowflake;
     public lastMessageID: Snowflake | null;
-    public locale: string;
+    public locale?: string;
     public readonly partial: false;
     public readonly presence: Presence;
     public system?: boolean;
@@ -1488,6 +1492,7 @@ declare module 'discord.js' {
     public displayAvatarURL(options?: ImageURLOptions & { dynamic?: boolean }): string;
     public equals(user: User): boolean;
     public fetch(): Promise<User>;
+    public fetchFlags(): Promise<UserFlags>;
     public toString(): string;
     public typingDurationIn(channel: ChannelResolvable): number;
     public typingIn(channel: ChannelResolvable): boolean;
@@ -1974,7 +1979,10 @@ declare module 'discord.js' {
 
   type Constructable<T> = new (...args: any[]) => T;
   function PartialTextBasedChannel<T>(Base?: Constructable<T>): Constructable<T & PartialTextBasedChannelFields>;
-  function TextBasedChannel<T>(Base?: Constructable<T>): Constructable<T & TextBasedChannelFields>;
+  function TextBasedChannel<T, I extends keyof TextBasedChannelFields = never>(
+    Base?: Constructable<T>,
+    ignore?: I[],
+  ): Constructable<T & Omit<TextBasedChannelFields, I>>;
 
   interface PartialTextBasedChannelFields {
     lastMessageID: Snowflake | null;
@@ -2195,7 +2203,11 @@ declare module 'discord.js' {
     guildMemberAdd: [GuildMember | PartialGuildMember];
     guildMemberAvailable: [GuildMember | PartialGuildMember];
     guildMemberRemove: [GuildMember | PartialGuildMember];
-    guildMembersChunk: [Collection<Snowflake, GuildMember | PartialGuildMember>, Guild];
+    guildMembersChunk: [
+      Collection<Snowflake, GuildMember | PartialGuildMember>,
+      Guild,
+      { count: number; index: number; nonce: string | undefined },
+    ];
     guildMemberSpeaking: [GuildMember | PartialGuildMember, Readonly<Speaking>];
     guildMemberUpdate: [GuildMember | PartialGuildMember, GuildMember | PartialGuildMember];
     guildUpdate: [Guild, Guild];
@@ -2385,6 +2397,7 @@ declare module 'discord.js' {
     limit?: number;
     withPresences?: boolean;
     time?: number;
+    nonce?: string;
   }
 
   interface FileOptions {
