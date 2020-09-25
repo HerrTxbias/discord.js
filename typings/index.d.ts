@@ -1023,15 +1023,9 @@ declare module 'discord.js' {
     public edit(content: StringResolvable, options: MessageEditOptions | MessageEmbed): Promise<Message>;
     public equals(message: Message, rawData: object): boolean;
     public fetchWebhook(): Promise<Webhook>;
-<<<<<<< HEAD
-    public fetch(): Promise<Message>;
-    public crosspost(): Promise<Message>;
-    public pin(): Promise<Message>;
-=======
     public crosspost(): Promise<Message>;
     public fetch(force?: boolean): Promise<Message>;
     public pin(options?: { reason?: string }): Promise<Message>;
->>>>>>> master
     public react(emoji: EmojiIdentifierResolvable): Promise<MessageReaction>;
     public reply(
       content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,
