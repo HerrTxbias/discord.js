@@ -449,33 +449,18 @@ class Message extends Base {
   }
 
   /**
-<<<<<<< HEAD
-   * Crossposts the message.
-=======
    * Publishes a message in an announcement channel to all channels following it.
->>>>>>> master
    * @returns {Promise<Message>}
    * @example
    * // Crosspost a message
    * if (message.channel.type === 'news') {
    *   message.crosspost()
-<<<<<<< HEAD
-   *     .then(msg => console.log('Crossposted message`))
-=======
    *     .then(() => console.log('Crossposted message'))
->>>>>>> master
    *     .catch(console.error);
    * }
    */
   async crosspost() {
-<<<<<<< HEAD
-    await this.client.api
-      .channels(this.channel.id)
-      .messages(this.id)
-      .crosspost.post();
-=======
     await this.client.api.channels(this.channel.id).messages(this.id).crosspost.post();
->>>>>>> master
     return this;
   }
 
