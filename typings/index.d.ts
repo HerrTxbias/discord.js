@@ -2133,7 +2133,7 @@ declare module 'discord.js' {
     shardID?: number | readonly number[];
   }
 
-  type ActivityType = 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING' | 'CUSTOM_STATUS';
+  type ActivityType = 'PLAYING' | 'STREAMING' | 'LISTENING' | 'WATCHING' | 'CUSTOM_STATUS' | 'COMPETING';
 
   interface AddGuildMemberOptions {
     accessToken: string;
